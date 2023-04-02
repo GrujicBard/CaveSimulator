@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Bard\\Source\\Repos\\CaveSimulator\\IS_naloga_2\\IS_naloga_2.csproj": {}
+    "C:\\Users\\Bard\\source\\repos\\CaveSimulator\\IS_naloga_2\\IS_naloga_2.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Bard\\Source\\Repos\\CaveSimulator\\IS_naloga_2\\IS_naloga_2.csproj": {
+    "C:\\Users\\Bard\\source\\repos\\CaveSimulator\\IS_naloga_2\\IS_naloga_2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Bard\\Source\\Repos\\CaveSimulator\\IS_naloga_2\\IS_naloga_2.csproj",
+        "projectUniqueName": "C:\\Users\\Bard\\source\\repos\\CaveSimulator\\IS_naloga_2\\IS_naloga_2.csproj",
         "projectName": "IS_naloga_2",
-        "projectPath": "C:\\Users\\Bard\\Source\\Repos\\CaveSimulator\\IS_naloga_2\\IS_naloga_2.csproj",
+        "projectPath": "C:\\Users\\Bard\\source\\repos\\CaveSimulator\\IS_naloga_2\\IS_naloga_2.csproj",
         "packagesPath": "C:\\Users\\Bard\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Bard\\Source\\Repos\\CaveSimulator\\IS_naloga_2\\obj\\",
+        "outputPath": "C:\\Users\\Bard\\source\\repos\\CaveSimulator\\IS_naloga_2\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Bard\\AppData\\Roaming\\NuGet\\NuGet.Config",

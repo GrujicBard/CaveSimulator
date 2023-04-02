@@ -24,7 +24,7 @@ namespace IS_naloga_2
             IsAlive = !IsAlive;
         }
 
-        public void DetermineNextState()
+        public void DetermineNextState() // Rules to determine next state
         {
             if (IsAlive) 
             {
