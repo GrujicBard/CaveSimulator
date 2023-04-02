@@ -305,7 +305,7 @@
             btn_show_volume.Name = "btn_show_volume";
             btn_show_volume.Size = new Size(86, 33);
             btn_show_volume.TabIndex = 10;
-            btn_show_volume.Text = "Magic";
+            btn_show_volume.Text = "Dev";
             btn_show_volume.UseVisualStyleBackColor = false;
             btn_show_volume.Click += button1_Click;
             // 
