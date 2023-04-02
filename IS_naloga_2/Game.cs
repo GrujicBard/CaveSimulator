@@ -75,26 +75,31 @@ namespace IS_naloga_2
                             {
                                 MoveCellsDown(x, y);
                             }
-                            else if (!IfSpaceDown(x, y)) // if no empty cells bellow, split water
+                            else if (!IfSpaceDown(x, y)) // If no empty cells bellow
                             {
                                 if (BottomElement(x, y).GetState() == Cell.State.Water && BottomElement(x, y).Volume < 100.00 && Element(x, y).Volume > 0.00)
-                                {
-                                    SplitWaterBottom(BottomElement(x, y), Element(x, y).Volume);
+                                { // If bottom element not full water, split volume down
+                                    BottomElement(x, y).Volume += Element(x, y).Volume;
                                     Element(x, y).Volume = 0.00;
+
                                 }
-                                SplitWaterMiddle(x, y, SumWaterMiddle(x, y)); // Water is divided evenly
-                                if (Element(x, y).Volume > 100.00)
+                                else // Else split water horizontally
                                 {
-                                    if (IfTopElement(x, y, Cell.State.Wood))
-                                    {
-                                        NCells[x, y - 1] = Cells[x, y - 2];
-                                        NCells[x, y - 2] = Cells[x, y - 1];
-                                    }
-                                    //Split leftover water TopLeft, Top, TopRight
-                                    double volumeOverLimit = Element(x, y).Volume - 100.00;
-                                    Element(x, y).Volume = 100.00;
-                                    SplitWaterTop(TopElement(x, y), volumeOverLimit);
+                                    SplitWaterMiddle(x, y, SumWaterMiddle(x, y)); // Water is divided evenly
                                 }
+
+                                //if (Element(x, y).Volume > 100.00)
+                                //{
+                                    //if (IfTopElement(x, y, Cell.State.Wood))
+                                    //{
+                                    //    NCells[x, y - 1] = Cells[x, y - 2];
+                                    //    NCells[x, y - 2] = Cells[x, y - 1];
+                                    //}
+                                    //Split leftover water TopLeft, Top, TopRight
+                                    //double volumeOverLimit = Element(x, y).Volume - 100.00;
+                                    //Element(x, y).Volume = 100.00;
+                                    //SplitWaterTop(TopElement(x, y), volumeOverLimit);
+                                //}
                             }
                             break;
                         case Cell.State.Fire:
@@ -260,7 +265,7 @@ namespace IS_naloga_2
 
         public void SplitWaterMiddle(int x, int y, double volume) // volume is already split water from SumWaterMiddle
         {
-            if (volume > 0.10) // 0.01
+            if (volume >= 0.01) // 0.10
             {
                 int index = 1;
                 while (true)
@@ -369,11 +374,11 @@ namespace IS_naloga_2
             return counter;
         }
 
-        public void SplitWaterBottom(Cell element, double volume)
+        public void SplitWaterBottom(Cell bottomElement, double elementVolume)
         {
-            if (element.GetState() == Cell.State.Water && element.Volume < 100.00) // Bottom element
+            if (bottomElement.GetState() == Cell.State.Water && bottomElement.Volume < 100.00)
             {
-                element.Volume += volume;
+                bottomElement.Volume += elementVolume;
             }
         }
 

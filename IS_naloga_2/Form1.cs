@@ -33,7 +33,8 @@ namespace IS_naloga_2
         public Form1()
         {
             InitializeComponent();
-            StartPosition = FormStartPosition.CenterScreen;
+            this.StartPosition = FormStartPosition.Manual;
+            this.Location = new Point(0, 0);
             columns = tableLayoutPanel1.ColumnCount;
             rows = tableLayoutPanel1.RowCount;
             cellColors = new Color[columns, rows];
