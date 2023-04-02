@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Xml.Linq;
 
 namespace IS_naloga_2
 {
@@ -61,7 +62,7 @@ namespace IS_naloga_2
                             }
                             break;
                         case Cell.State.Water:
-                            if (Element(x, y).Volume <= 0.01) // Leftover water evaporates (==0)
+                            if (Element(x, y).Volume <= 0.01) // Leftover water evaporates
                             {
                                 Element(x, y).SetNextState(Cell.State.EmptyCell);
                                 break;
@@ -74,32 +75,67 @@ namespace IS_naloga_2
                             if (IfBottomElement(x, y, Cell.State.EmptyCell))
                             {
                                 MoveCellsDown(x, y);
+                                break;
                             }
-                            else if (!IfSpaceDown(x, y)) // If no empty cells bellow
+                            if (!IfSpaceDown(x, y)) // If no empty cells bellow
                             {
                                 if (BottomElement(x, y).GetState() == Cell.State.Water && BottomElement(x, y).Volume < 100.00 && Element(x, y).Volume > 0.00)
                                 { // If bottom element not full water, split volume down
                                     BottomElement(x, y).Volume += Element(x, y).Volume;
-                                    Element(x, y).Volume = 0.00;
+                                    Element(x, y).Volume = 0.00; //Volume
 
                                 }
-                                else // Else split water horizontally
+                                else if (Element(x, y).Volume > 0.01) // Else split water horizontally
                                 {
-                                    SplitWaterMiddle(x, y, SumWaterMiddle(x, y)); // Water is divided evenly
-                                }
+                                    /* New Water */
 
-                                //if (Element(x, y).Volume > 100.00)
-                                //{
-                                    //if (IfTopElement(x, y, Cell.State.Wood))
+                                    SplitWaterMiddle(x, y, SumWaterMiddle(x, y)); // Water is divided evenly
+
+
+                                    /* Old Water */
+
+                                    //int spaces = CountSpacesMiddle(x, y);
+                                    //double newVolume = Element(x, y).Volume / spaces;
+                                    //Element(x, y).Volume = newVolume;
+                                    //if (IfLeftElement(x, y, Cell.State.Water))
                                     //{
-                                    //    NCells[x, y - 1] = Cells[x, y - 2];
-                                    //    NCells[x, y - 2] = Cells[x, y - 1];
+                                    //    LeftElement(x, y).Volume += newVolume;
                                     //}
-                                    //Split leftover water TopLeft, Top, TopRight
-                                    //double volumeOverLimit = Element(x, y).Volume - 100.00;
-                                    //Element(x, y).Volume = 100.00;
-                                    //SplitWaterTop(TopElement(x, y), volumeOverLimit);
-                                //}
+                                    //else if (IfLeftElement(x, y, Cell.State.EmptyCell))
+                                    //{
+                                    //    LeftElement(x, y).SetNextState(Cell.State.Water);
+                                    //    LeftElement(x, y).Volume = newVolume;
+                                    //}
+                                    //if (IfRightElement(x, y, Cell.State.Water))
+                                    //{
+                                    //    RightElement(x, y).Volume += newVolume;
+                                    //}
+                                    //else if (IfRightElement(x, y, Cell.State.EmptyCell))
+                                    //{
+                                    //    RightElement(x, y).SetNextState(Cell.State.Water);
+                                    //    RightElement(x, y).Volume = newVolume;
+                                    //}
+
+                                    /* Old Water */
+
+                                }
+                                if (Element(x, y).Volume > 100.00)
+                                {
+
+                                    //If water volume over 100, split leftover water top
+                                    double volumeOverLimit = Element(x, y).Volume - 100.00;
+                                    Element(x, y).Volume = 100.00;
+                                    if (IfTopElement(x, y, Cell.State.EmptyCell))
+                                    {
+                                        TopElement(x, y).SetNextState(Cell.State.Water);
+                                        TopElement(x, y).Volume = volumeOverLimit;
+                                    }
+                                    else if (IfTopElement(x, y, Cell.State.Water))
+                                    {
+                                        TopElement(x, y).Volume += volumeOverLimit;
+                                    }
+                                }
+ 
                             }
                             break;
                         case Cell.State.Fire:
@@ -265,7 +301,7 @@ namespace IS_naloga_2
 
         public void SplitWaterMiddle(int x, int y, double volume) // volume is already split water from SumWaterMiddle
         {
-            if (volume >= 0.01) // 0.10
+            if (volume > 0.00) // 0.10
             {
                 int index = 1;
                 while (true)
@@ -307,65 +343,8 @@ namespace IS_naloga_2
             }
         }
 
-        public int CountWater(int x, int y)
-        {
-            int counter = 1;
 
-            if (TopLeftElement(x, y).GetState() == Cell.State.Water || TopLeftElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (TopElement(x, y).GetState() == Cell.State.Water || TopElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (TopRightElement(x, y).GetState() == Cell.State.Water || TopRightElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (LeftElement(x, y).GetState() == Cell.State.Water || LeftElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (RightElement(x, y).GetState() == Cell.State.Water || RightElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (BottomLeftElement(x, y).GetState() == Cell.State.Water || BottomLeftElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (BottomElement(x, y).GetState() == Cell.State.Water || BottomElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (BottomRightElement(x, y).GetState() == Cell.State.Water || BottomRightElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-
-            return counter;
-        }
-
-        public int CountWaterMinusTop(int x, int y)
-        {
-            int counter = 1;
-
-            if (LeftElement(x, y).GetState() == Cell.State.Water || LeftElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (RightElement(x, y).GetState() == Cell.State.Water || RightElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (BottomLeftElement(x, y).GetState() == Cell.State.Water || BottomLeftElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (BottomElement(x, y).GetState() == Cell.State.Water || BottomElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (BottomRightElement(x, y).GetState() == Cell.State.Water || BottomRightElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            return counter;
-        }
-
-        public int CountWaterBottom(int x, int y)
-        {
-            int counter = 1;
-
-            if (BottomLeftElement(x, y).GetState() == Cell.State.Water || BottomLeftElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (BottomElement(x, y).GetState() == Cell.State.Water || BottomElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (BottomRightElement(x, y).GetState() == Cell.State.Water || BottomRightElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            return counter;
-        }
-
-        public int CountWaterBottomIfNotFull(int x, int y)
-        {
-            int counter = 0;
-
-            if (BottomLeftElement(x, y).GetState() == Cell.State.Water && BottomLeftElement(x, y).Volume < 100.00) counter++;
-            if (BottomElement(x, y).GetState() == Cell.State.Water && BottomElement(x, y).Volume < 100.00) counter++;
-            if (BottomRightElement(x, y).GetState() == Cell.State.Water && BottomRightElement(x, y).Volume < 100.00) counter++;
-            return counter;
-        }
-
-        public int CountWaterTop(int x, int y)
-        {
-            int counter = 0;
-
-            if (TopLeftElement(x, y).GetState() == Cell.State.Water || TopLeftElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (TopElement(x, y).GetState() == Cell.State.Water || TopElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            if (TopRightElement(x, y).GetState() == Cell.State.Water || TopRightElement(x, y).GetState() == Cell.State.EmptyCell) counter++;
-            return counter;
-        }
-
-        public int CountWaterMiddle(int x, int y)
+        public int CountSpacesMiddle(int x, int y)
         {
             int counter = 1;
 
@@ -374,27 +353,6 @@ namespace IS_naloga_2
             return counter;
         }
 
-        public void SplitWaterBottom(Cell bottomElement, double elementVolume)
-        {
-            if (bottomElement.GetState() == Cell.State.Water && bottomElement.Volume < 100.00)
-            {
-                bottomElement.Volume += elementVolume;
-            }
-        }
-
-        public void SplitWaterTop(Cell element, double volume)
-        {
-            if (element.GetState() == Cell.State.EmptyCell) // Top cell
-            {
-                element.SetNextState(Cell.State.Water);
-                element.Volume = 0.00;
-                element.Volume += volume;
-            }
-            else if (element.GetState() == Cell.State.Water)
-            {
-                element.Volume += volume;
-            }
-        }
 
         public bool IfSpaceDown(int x, int y)
         {

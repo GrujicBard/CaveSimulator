@@ -22,6 +22,7 @@ namespace IS_naloga_2
         private Button btn_fire;
         private Button btn_sand;
         private Button btn_water;
+        private bool show_volume;
 
         private Button btn_inspect;
 
@@ -33,8 +34,8 @@ namespace IS_naloga_2
         public Form1()
         {
             InitializeComponent();
-            this.StartPosition = FormStartPosition.Manual;
-            this.Location = new Point(0, 0);
+            StartPosition = FormStartPosition.Manual;
+            Location = new Point(0, 0);
             columns = tableLayoutPanel1.ColumnCount;
             rows = tableLayoutPanel1.RowCount;
             cellColors = new Color[columns, rows];
@@ -45,6 +46,7 @@ namespace IS_naloga_2
             btn_generate.FlatAppearance.BorderColor = SystemColors.ControlDark;
             tableLayoutPanel1.BackColor = color_empty;
             FillTableLayoutPanel2();
+            show_volume = false;
 
         }
 
@@ -128,13 +130,17 @@ namespace IS_naloga_2
             {
                 var color = cellColors[e.Column, e.Row];
                 e.Graphics.FillRectangle(new SolidBrush(color), e.CellBounds);
-                if (game != null)
+
+                /* Show water volume */
+                if (game != null && show_volume)
                 {
                     if (game.Cells[e.Column, e.Row].GetState() == Cell.State.Water)
                     {
-                        e.Graphics.DrawString(game.Cells[e.Column, e.Row].Volume.ToString(), font1, Brushes.White, e.CellBounds);
+                        var volume = Math.Round(game.Cells[e.Column, e.Row].Volume, 2);
+                        e.Graphics.DrawString(volume.ToString(), font1, Brushes.White, e.CellBounds);
                     }
                 }
+                /* Show water volume */
             }
         }
 
@@ -415,6 +421,11 @@ namespace IS_naloga_2
         private void Form1_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            show_volume = !show_volume;
         }
     }
 }

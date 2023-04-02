@@ -39,6 +39,7 @@
             tableLayoutPanel2 = new TableLayoutPanel();
             label1 = new Label();
             btn_generate = new Button();
+            btn_show_volume = new Button();
             ((System.ComponentModel.ISupportInitialize)tb_speed).BeginInit();
             panel1.SuspendLayout();
             SuspendLayout();
@@ -189,19 +190,19 @@
             // 
             // tb_speed
             // 
-            tb_speed.Location = new Point(374, 26);
+            tb_speed.Location = new Point(482, 26);
             tb_speed.Margin = new Padding(3, 4, 3, 4);
             tb_speed.Name = "tb_speed";
             tb_speed.Size = new Size(119, 56);
             tb_speed.TabIndex = 4;
-            tb_speed.Value = 5;
+            tb_speed.Value = 10;
             tb_speed.ValueChanged += Tb_speed_ValueChanged;
             // 
             // lb_speed
             // 
             lb_speed.AutoSize = true;
             lb_speed.ForeColor = Color.WhiteSmoke;
-            lb_speed.Location = new Point(408, 1);
+            lb_speed.Location = new Point(516, 1);
             lb_speed.Name = "lb_speed";
             lb_speed.Size = new Size(51, 20);
             lb_speed.TabIndex = 5;
@@ -209,7 +210,6 @@
             // 
             // timer1
             // 
-            timer1.Interval = 500;
             timer1.Tick += Timer1_Tick;
             // 
             // panel1
@@ -294,6 +294,21 @@
             btn_generate.UseVisualStyleBackColor = false;
             btn_generate.Click += Btn_generate_Click;
             // 
+            // btn_show_volume
+            // 
+            btn_show_volume.BackColor = SystemColors.ControlDarkDark;
+            btn_show_volume.BackgroundImageLayout = ImageLayout.Center;
+            btn_show_volume.FlatStyle = FlatStyle.Flat;
+            btn_show_volume.ForeColor = Color.WhiteSmoke;
+            btn_show_volume.Location = new Point(372, 23);
+            btn_show_volume.Margin = new Padding(3, 4, 3, 4);
+            btn_show_volume.Name = "btn_show_volume";
+            btn_show_volume.Size = new Size(86, 33);
+            btn_show_volume.TabIndex = 10;
+            btn_show_volume.Text = "Magic";
+            btn_show_volume.UseVisualStyleBackColor = false;
+            btn_show_volume.Click += button1_Click;
+            // 
             // Form1
             // 
             AcceptButton = btn_start;
@@ -301,6 +316,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(64, 64, 64);
             ClientSize = new Size(1307, 1103);
+            Controls.Add(btn_show_volume);
             Controls.Add(btn_generate);
             Controls.Add(panel1);
             Controls.Add(lb_speed);
@@ -335,5 +351,6 @@
         private Label label1;
         private TableLayoutPanel tableLayoutPanel2;
         private Button btn_generate;
+        private Button btn_show_volume;
     }
 }

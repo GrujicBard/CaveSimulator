@@ -29,7 +29,7 @@ namespace IS_naloga_2
             get { return _volume; }
             set
             {
-                _volume = Math.Round(value, 2);
+                _volume = value; //_volume = Math.Round(value, 2);
                 RefreshColor();
             }
         }
@@ -87,10 +87,14 @@ namespace IS_naloga_2
         public void RefreshColor()
         {
             double limit;
-            if (Volume < 10.00) limit = 0.2f; // better visibility
-            else if (Volume >= 100.00) limit = 1.0f;
-            else limit = Volume/100;
-            Color = Color.FromArgb((int)(255 * limit), Color.R, Color.G, Color.B);
+            if (Volume >= 0.00)
+            {
+                if (Volume == 0.00 && Volume < 0.01) limit = 0.00;
+                else if (Volume > 0.01 && Volume < 10.00) limit = 0.1f; // better visibility
+                else if (Volume >= 100.00) limit = 1.0f;
+                else limit = Volume / 100;
+                Color = Color.FromArgb((int)(255 * limit), Color.R, Color.G, Color.B);
+            }
         }
 
         public enum State
