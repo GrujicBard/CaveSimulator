@@ -1,1 +1,1 @@
-# CaveSimulator
+# Cellular-Automata_Conway-GoL

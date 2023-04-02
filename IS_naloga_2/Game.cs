@@ -11,14 +11,16 @@ namespace IS_naloga_2
     {
         public Cell[,] Cells { get; set; }
         public Cell[,] NCells { get; set; }
-        const int width = 50;
-        const int height = 50;
+        const int WIDTH = 50;
+        const int HEIGHT = 50;
         public int Columns { get { return Cells.GetLength(0); } }
         public int Rows { get { return Cells.GetLength(1); } }
 
+        private Random _rnd;
+
         public Game(bool[,] caveMap)
         {
-            Cells = new Cell[width, height];
+            Cells = new Cell[WIDTH, HEIGHT];
             for (int x = 0; x < Columns; x++)
             {
                 for (int y = 0; y < Rows; y++)
@@ -59,7 +61,7 @@ namespace IS_naloga_2
                             }
                             break;
                         case Cell.State.Water:
-                            if (Element(x, y).Volume == 0.00)
+                            if (Element(x, y).Volume <= 0.01) // Leftover water evaporates (==0)
                             {
                                 Element(x, y).SetNextState(Cell.State.EmptyCell);
                                 break;
@@ -73,15 +75,15 @@ namespace IS_naloga_2
                             {
                                 MoveCellsDown(x, y);
                             }
-                            else if (!IfSpaceDown(x, y))
+                            else if (!IfSpaceDown(x, y)) // if no empty cells bellow, split water
                             {
-                                SplitWaterMiddle(x, y, SumWaterMiddle(x, y));
-                                if (BottomElement(x, y).GetState() == Cell.State.Water && Element(x, y).Volume <= 100.00)
+                                if (BottomElement(x, y).GetState() == Cell.State.Water && BottomElement(x, y).Volume < 100.00 && Element(x, y).Volume > 0.00)
                                 {
-                                    SpreadWater(BottomElement(x, y), Element(x, y).Volume);
+                                    SplitWaterBottom(BottomElement(x, y), Element(x, y).Volume);
                                     Element(x, y).Volume = 0.00;
                                 }
-                                if(Element(x, y).Volume > 100.00)
+                                SplitWaterMiddle(x, y, SumWaterMiddle(x, y)); // Water is divided evenly
+                                if (Element(x, y).Volume > 100.00)
                                 {
                                     if (IfTopElement(x, y, Cell.State.Wood))
                                     {
@@ -89,10 +91,9 @@ namespace IS_naloga_2
                                         NCells[x, y - 2] = Cells[x, y - 1];
                                     }
                                     //Split leftover water TopLeft, Top, TopRight
-                                    double volumeOverLimit = (Element(x, y).Volume - 100.0);
-                                    double leftover = Element(x, y).Volume - volumeOverLimit;
-                                    SpreadWater(TopElement(x, y), volumeOverLimit);
-                                    Element(x, y).Volume = leftover;
+                                    double volumeOverLimit = Element(x, y).Volume - 100.00;
+                                    Element(x, y).Volume = 100.00;
+                                    SplitWaterTop(TopElement(x, y), volumeOverLimit);
                                 }
                             }
                             break;
@@ -122,12 +123,12 @@ namespace IS_naloga_2
                             }
                             break;
                         case Cell.State.Sand:
-                            Random rnd = new Random();
+                            _rnd = new Random();
                             if (IfBottomElement(x, y, Cell.State.EmptyCell) || IfBottomElement(x, y, Cell.State.Water))
                             {
                                 MoveCellsDown(x, y);
                             }
-                            else if ((rnd.Next(0, 2) != 0))
+                            else if ((_rnd.Next(0, 2) != 0))
                             {
                                 if (IfBottomRightElement(x, y, Cell.State.EmptyCell) || IfBottomRightElement(x, y, Cell.State.Water))
                                 {
@@ -152,9 +153,32 @@ namespace IS_naloga_2
                             break;
                         case Cell.State.WhiteSmoke:
                         case Cell.State.BlackSmoke:
+                            _rnd = new Random();
                             if (IfTopNotElement(x, y, Cell.State.CaveWall) && IfTopNotElement(x, y, Cell.State.WhiteSmoke) && IfTopNotElement(x, y, Cell.State.BlackSmoke))
                             {
                                 MoveCellsUp(x, y);
+                            }
+                            else if ((_rnd.Next(0, 2) != 0))
+                            {
+                                if (IfTopRightElement(x, y, Cell.State.EmptyCell))
+                                {
+                                    MoveCellRightUp(x, y);
+                                }
+                                else if (IfTopLeftElement(x, y, Cell.State.EmptyCell))
+                                {
+                                    MoveCellLeftUp(x, y);
+                                }
+                            }
+                            else
+                            {
+                                if (IfTopLeftElement(x, y, Cell.State.EmptyCell))
+                                {
+                                    MoveCellLeftUp(x, y);
+                                }
+                                else if (IfTopRightElement(x, y, Cell.State.EmptyCell))
+                                {
+                                    MoveCellRightUp(x, y);
+                                }
                             }
                             if (Element(x, y).Counter == 3)
                             {
@@ -192,7 +216,7 @@ namespace IS_naloga_2
             }
         }
 
-        public double SumWaterMiddle(int x, int y)
+        public double SumWaterMiddle(int x, int y) //Counts empty and water cells left and right of cell and returns divided water volume of each cell
         {
             double volume = Cells[x, y].Volume;
             int counter = 1;
@@ -200,11 +224,11 @@ namespace IS_naloga_2
 
             while (true)
             {
-                if (Cells[x - index, y].GetState() == Cell.State.Water || Cells[x - index, y].GetState() == Cell.State.EmptyCell)
+                if (Cells[x - index, y].GetState() == Cell.State.Water || Cells[x - index, y].GetState() == Cell.State.EmptyCell) // Move left of cell and count number of empty and water cells
                 {
                     counter++;
                 }
-                if (Cells[x - index, y].GetState() == Cell.State.Water)
+                if (Cells[x - index, y].GetState() == Cell.State.Water) // If cell is water, sum volume
                 {
                     volume += Cells[x - index, y].Volume;
                 }
@@ -217,7 +241,7 @@ namespace IS_naloga_2
             index = 1;
             while (true)
             {
-                if (Cells[x + index, y].GetState() == Cell.State.Water || Cells[x + index, y].GetState() == Cell.State.EmptyCell)
+                if (Cells[x + index, y].GetState() == Cell.State.Water || Cells[x + index, y].GetState() == Cell.State.EmptyCell)  // Move right of cell and count number of empty and water cells
                 {
                     counter++;
                 }
@@ -231,33 +255,33 @@ namespace IS_naloga_2
                     || Cells[x + index, y + 1].GetState() == Cell.State.Sand && Cells[x + (index - 1), y + 1].GetState() == Cell.State.CaveWall) break; //Check bottomright of element untill emptycell 
                 index++;
             }
-            return volume / counter;
+            return volume / counter; //Split water volume by number of empty and water cells
         }
 
-        public void SplitWaterMiddle(int x, int y, double volume)
+        public void SplitWaterMiddle(int x, int y, double volume) // volume is already split water from SumWaterMiddle
         {
-            if (volume >0.00)
+            if (volume > 0.10) // 0.01
             {
                 int index = 1;
                 while (true)
                 {
-                    if (Cells[x - index, y].GetState() == Cell.State.Water)
+                    if (Cells[x - index, y].GetState() == Cell.State.Water) // If cell to left is water, set volume
                     {
                         Cells[x - index, y].Volume = volume;
                     }
-                    else if (Cells[x - index, y].GetState() == Cell.State.EmptyCell)
+                    else if (Cells[x - index, y].GetState() == Cell.State.EmptyCell) // If cell to left is empty, create water and set volume
                     {
                         Cells[x - index, y].SetNextState(Cell.State.Water);
                         Cells[x - index, y].Volume = volume;
                     }
                     if (Cells[x - index, y].GetState() == Cell.State.CaveWall || Cells[x - index, y].GetState() == Cell.State.Sand
-                        || Cells[x - index, y].GetState() == Cell.State.Wood) break;  //Check left of element untill obstacle //Check right of element untill wall
+                        || Cells[x - index, y].GetState() == Cell.State.Wood) break;  //Check left of element untill obstacle
                     if (Cells[x - index, y + 1].GetState() == Cell.State.EmptyCell || Cells[x - index, y + 1].GetState() == Cell.State.Water
                         || Cells[x - index, y + 1].GetState() == Cell.State.Sand && Cells[x - (index - 1), y + 1].GetState() == Cell.State.CaveWall) break; //Check bottomright of element untill emptycell
                     index++;
                 }
                 index = 1;
-                while (true)
+                while (true) // Same thing to the right
                 {
                     if (Cells[x + index, y].GetState() == Cell.State.Water)
                     {
@@ -345,20 +369,25 @@ namespace IS_naloga_2
             return counter;
         }
 
-        public void SpreadWater(Cell element, double volume)
+        public void SplitWaterBottom(Cell element, double volume)
         {
-            if (volume > 0.00)
+            if (element.GetState() == Cell.State.Water && element.Volume < 100.00) // Bottom element
             {
-                if (element.GetState() == Cell.State.EmptyCell && element.Volume == 100.00) //MAYBE WRONG  && volume >= 1.0
-                {
-                    element.SetNextState(Cell.State.Water);
-                    element.Volume = 0.00;
-                    element.Volume += volume;
-                }
-                else if (element.GetState() == Cell.State.Water)
-                {
-                    element.Volume += volume;
-                }
+                element.Volume += volume;
+            }
+        }
+
+        public void SplitWaterTop(Cell element, double volume)
+        {
+            if (element.GetState() == Cell.State.EmptyCell) // Top cell
+            {
+                element.SetNextState(Cell.State.Water);
+                element.Volume = 0.00;
+                element.Volume += volume;
+            }
+            else if (element.GetState() == Cell.State.Water)
+            {
+                element.Volume += volume;
             }
         }
 
@@ -449,6 +478,16 @@ namespace IS_naloga_2
             return BottomRightElement(x, y).GetState() == element;
         }
 
+        public bool IfTopLeftElement(int x, int y, Cell.State element)
+        {
+            return TopLeftElement(x, y).GetState() == element;
+        }
+
+        public bool IfTopRightElement(int x, int y, Cell.State element)
+        {
+            return TopRightElement(x, y).GetState() == element;
+        }
+
         public bool IfBottomElement(int x, int y, Cell.State element)
         {
             return BottomElement(x, y).GetState() == element;
@@ -502,6 +541,18 @@ namespace IS_naloga_2
         {
             NCells[x, y] = BottomLeftElement(x, y);
             NCells[x - 1, y + 1] = Element(x, y);
+        }
+
+        public void MoveCellRightUp(int x, int y)
+        {
+            NCells[x, y] = TopRightElement(x, y);
+            NCells[x + 1, y - 1] = Element(x, y);
+        }
+
+        public void MoveCellLeftUp(int x, int y)
+        {
+            NCells[x, y] = TopLeftElement(x, y);
+            NCells[x - 1, y - 1] = Element(x, y);
         }
     }
 }

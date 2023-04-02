@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Diagnostics;
+using System.Data.Common;
 
 namespace IS_naloga_2
 {
@@ -9,12 +10,12 @@ namespace IS_naloga_2
         private int columns;
         private int rows;
         private Color currentColor;
-        private Color color_empty = Color.FromArgb(118, 122, 128);
-        private Color color_caveWall = Color.FromArgb(41, 41, 44);
-        private Color color_water = Color.FromArgb(255, 0, 84, 118);
-        private Color color_fire = Color.FromArgb(215, 53, 2);
-        private Color color_wood = Color.FromArgb(81, 56, 40);
-        private Color color_sand = Color.FromArgb(194, 178, 128);
+        private readonly Color color_empty = Color.FromArgb(118, 122, 128);
+        private readonly Color color_caveWall = Color.FromArgb(41, 41, 44);
+        private readonly Color color_water = Color.FromArgb(255, 0, 84, 118);
+        private readonly Color color_fire = Color.FromArgb(215, 53, 2);
+        private readonly Color color_wood = Color.FromArgb(81, 56, 40);
+        private readonly Color color_sand = Color.FromArgb(194, 178, 128);
         private Button btn_empty;
         private Button btn_caveWall;
         private Button btn_wood;
@@ -29,9 +30,7 @@ namespace IS_naloga_2
         Cave cave;
         Game game;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public Form1()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             InitializeComponent();
             StartPosition = FormStartPosition.CenterScreen;
@@ -44,13 +43,13 @@ namespace IS_naloga_2
             btn_clear.FlatAppearance.BorderColor = SystemColors.ControlDark;
             btn_generate.FlatAppearance.BorderColor = SystemColors.ControlDark;
             tableLayoutPanel1.BackColor = color_empty;
-            fillTableLayoutPanel2();
+            FillTableLayoutPanel2();
 
         }
 
-        private void btn_start_Click(object sender, EventArgs e)
+        private void Btn_start_Click(object sender, EventArgs e)
         {
-            if(btn_start.Text == "Start")
+            if (btn_start.Text == "Start")
             {
                 timer1.Start();
                 btn_start.Text = "Pause";
@@ -79,28 +78,28 @@ namespace IS_naloga_2
             }
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void Timer1_Tick(object sender, EventArgs e)
         {
             GameStart();
         }
 
-        private void tb_speed_ValueChanged(object sender, EventArgs e)
+        private void Tb_speed_ValueChanged(object sender, EventArgs e)
         {
-            if (tb_speed.Value == 1) timer1.Interval = 100;
-            if (tb_speed.Value == 2) timer1.Interval = 200;
-            if (tb_speed.Value == 3) timer1.Interval = 300;
-            if (tb_speed.Value == 4) timer1.Interval = 400;
-            if (tb_speed.Value == 5) timer1.Interval = 500;
-            if (tb_speed.Value == 6) timer1.Interval = 600;
-            if (tb_speed.Value == 7) timer1.Interval = 700;
-            if (tb_speed.Value == 8) timer1.Interval = 800;
-            if (tb_speed.Value == 9) timer1.Interval = 900;
-            if (tb_speed.Value == 10) timer1.Interval = 1000;
+            if (tb_speed.Value == 1) timer1.Interval = 1000;
+            if (tb_speed.Value == 2) timer1.Interval = 900;
+            if (tb_speed.Value == 3) timer1.Interval = 800;
+            if (tb_speed.Value == 4) timer1.Interval = 700;
+            if (tb_speed.Value == 5) timer1.Interval = 600;
+            if (tb_speed.Value == 6) timer1.Interval = 500;
+            if (tb_speed.Value == 7) timer1.Interval = 400;
+            if (tb_speed.Value == 8) timer1.Interval = 300;
+            if (tb_speed.Value == 9) timer1.Interval = 200;
+            if (tb_speed.Value == 10) timer1.Interval = 100;
         }
 
-        private void btn_pause_Click(object sender, EventArgs e)
+        private void Btn_pause_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         public static void SetDoubleBuffered(Control c)
@@ -121,17 +120,24 @@ namespace IS_naloga_2
             }
         }
 
-        private void tableLayoutPanel1_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
+        private void TableLayoutPanel1_CellPaint(object sender, TableLayoutCellPaintEventArgs e)
         {
+            using Font font1 = new("Arial", 5, FontStyle.Regular, GraphicsUnit.Point);
             if (cellColors != null)
             {
                 var color = cellColors[e.Column, e.Row];
                 e.Graphics.FillRectangle(new SolidBrush(color), e.CellBounds);
-
+                if (game != null)
+                {
+                    if (game.Cells[e.Column, e.Row].GetState() == Cell.State.Water)
+                    {
+                        e.Graphics.DrawString(game.Cells[e.Column, e.Row].Volume.ToString(), font1, Brushes.White, e.CellBounds);
+                    }
+                }
             }
         }
 
-        private void tableLayoutPanel1_MouseClick(object sender, MouseEventArgs e)
+        private void TableLayoutPanel1_MouseClick(object sender, MouseEventArgs e)
         {
             int row = 0;
             int verticalOffset = 0;
@@ -201,7 +207,7 @@ namespace IS_naloga_2
             }
         }
 
-        private void fillTableLayoutPanel2()
+        private void FillTableLayoutPanel2()
         {
             tableLayoutPanel2.Controls.Add(btn_empty = new Button() { BackColor = color_empty, FlatStyle = FlatStyle.Flat, ForeColor = SystemColors.ControlDarkDark, Dock = DockStyle.Fill });
             tableLayoutPanel2.Controls.Add(new Label() { Text = "Empty Block", Font = new Font("Segoe UI", 12) });
@@ -277,7 +283,7 @@ namespace IS_naloga_2
 
         }
 
-        private bool[,] generateCave()
+        private bool[,] GenerateCave()
         {
             bool[,] caveMap = new bool[columns, rows];
 
@@ -319,16 +325,16 @@ namespace IS_naloga_2
             return caveMap;
         }
 
-        private void btn_generate_Click(object sender, EventArgs e)
+        private void Btn_generate_Click(object sender, EventArgs e)
         {
             cave = new Cave();
-            generatedCave = generateCave();
+            generatedCave = GenerateCave();
             game = new Game(generatedCave);
-            generateMap();
+            GenerateMap();
             tableLayoutPanel1.Refresh();
         }
 
-        private void generateMap()
+        private void GenerateMap()
         {
             for (int x = 0; x < columns; x++)
             {
@@ -339,13 +345,15 @@ namespace IS_naloga_2
             }
         }
 
-        private void btn_clear_Click(object sender, EventArgs e)
+        private void Btn_clear_Click(object sender, EventArgs e)
         {
             if (generatedCave != null)
             {
                 game = new Game(generatedCave);
-                generateMap();
+                GenerateMap();
                 tableLayoutPanel1.Refresh();
+                timer1.Stop();
+                btn_start.Text = "Start";
             }
         }
 
@@ -401,6 +409,11 @@ namespace IS_naloga_2
                 btn_caveWall.PerformClick();
                 btn_caveWall.Focus();
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
