@@ -1,0 +1,16 @@
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\bin\Debug\net6.0-windows\CaveSimulator.exe
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\bin\Debug\net6.0-windows\CaveSimulator.deps.json
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\bin\Debug\net6.0-windows\CaveSimulator.runtimeconfig.json
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\bin\Debug\net6.0-windows\CaveSimulator.dll
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\bin\Debug\net6.0-windows\CaveSimulator.pdb
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\obj\Debug\net6.0-windows\IS_naloga_2.Form1.resources
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\obj\Debug\net6.0-windows\CaveSimulator.csproj.GenerateResource.cache
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\obj\Debug\net6.0-windows\CaveSimulator.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\obj\Debug\net6.0-windows\CaveSimulator.AssemblyInfoInputs.cache
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\obj\Debug\net6.0-windows\CaveSimulator.AssemblyInfo.cs
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\obj\Debug\net6.0-windows\CaveSimulator.csproj.CoreCompileInputs.cache
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\obj\Debug\net6.0-windows\CaveSimulator.dll
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\obj\Debug\net6.0-windows\refint\CaveSimulator.dll
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\obj\Debug\net6.0-windows\CaveSimulator.pdb
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\obj\Debug\net6.0-windows\CaveSimulator.genruntimeconfig.cache
+C:\Users\Bard\source\repos\CaveSimulator\CaveSimulator\obj\Debug\net6.0-windows\ref\CaveSimulator.dll
